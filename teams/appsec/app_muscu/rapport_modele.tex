@@ -1,0 +1,72 @@
+% Modèle de rapport d'audit : à copier dans rapports/audit_AAAA-MM-JJ.tex puis remplir.
+% Compilation : tectonic audit_AAAA-MM-JJ.tex  (puis supprimer tout sauf .tex et .pdf)
+\documentclass[11pt,a4paper]{article}
+\usepackage[a4paper,margin=2.4cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{lmodern,microtype,booktabs,array,xcolor,enumitem,fancyhdr,etoolbox,hyperref}\usepackage{tcolorbox}\tcbuselibrary{breakable,skins}
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black,pdftitle={Rapport d'audit de sécurité}}
+\setlist{itemsep=2pt,topsep=4pt}
+\setlength{\parindent}{0pt}\setlength{\parskip}{6pt}
+\pagestyle{fancy}\fancyhf{}\renewcommand{\headrulewidth}{0.3pt}
+\fancyhead[L]{\small Rapport d'audit de sécurité}\fancyhead[R]{\small \AUTEURAPP{} -- \DATEAUDIT}\fancyfoot[C]{\small\thepage}
+
+% Gravités
+\definecolor{gcrit}{HTML}{8B0000}\definecolor{gelev}{HTML}{D2410E}\definecolor{gmoy}{HTML}{C98A00}
+\definecolor{gfaib}{HTML}{2E6DA4}\definecolor{ginfo}{HTML}{6B7280}\definecolor{gok}{HTML}{2E7D32}
+\newcommand{\gravite}[1]{%
+  \ifstrequal{#1}{Critique}{\textcolor{gcrit}{\textbf{Critique}}}{%
+  \ifstrequal{#1}{Élevée}{\textcolor{gelev}{\textbf{Élevée}}}{%
+  \ifstrequal{#1}{Moyenne}{\textcolor{gmoy}{\textbf{Moyenne}}}{%
+  \ifstrequal{#1}{Faible}{\textcolor{gfaib}{\textbf{Faible}}}{\textcolor{ginfo}{\textbf{#1}}}}}}}
+
+% \classif{OWASP ... ; CVSS 3.1 x.x (vecteur)} avant chaque \constat (optionnel mais attendu)
+% \constat{id}{gravité}{titre}{localisation}{description}{impact}{preuve}{recommandation}{statut}
+\newtcolorbox{fiche}[2]{breakable,colback=white,colframe=black!35,boxrule=0.4pt,arc=1.5pt,
+  title={#1 \hfill #2},fonttitle=\bfseries\small,coltitle=black,colbacktitle=black!6}
+\newcommand{\cclassif}{}
+\newcommand{\classif}[1]{\renewcommand{\cclassif}{#1}}
+\newcommand{\constat}[9]{\begin{fiche}{#1 -- #3}{\gravite{#2}}
+  \ifdefempty{\cclassif}{}{\textbf{Classification :} \cclassif\par}
+  \textbf{Localisation :} #4\par
+  \textbf{Description :} #5\par
+  \textbf{Impact :} #6\par
+  \textbf{Preuve :} #7\par
+  \textbf{Recommandation :} #8\par
+  \textbf{Statut :} #9
+\end{fiche}\renewcommand{\cclassif}{}}
+
+\newcommand{\AUTEURAPP}{NOM\_APP}\newcommand{\DATEAUDIT}{AAAA-MM-JJ}
+
+\begin{document}
+\begin{titlepage}\centering\vspace*{3cm}
+{\Huge\bfseries Rapport d'audit de sécurité\par}\vspace{0.6cm}
+{\Large \AUTEURAPP\par}\vspace{0.4cm}{\large Audit en boîte blanche -- \DATEAUDIT\par}
+\vfill{\small Document confidentiel.\par}\end{titlepage}
+\tableofcontents\newpage
+
+\section{Résumé exécutif}
+% 5-8 phrases pour un non-technique : verdict, constat principal, ce qui a été corrigé, ce qui reste, limites.
+
+\section{Périmètre, méthode et limites}
+% Architecture auditée, composants, outils, environnement de test, ce qui n'a PAS été testé.
+
+\section{Échelle de gravité}
+% Définition des niveaux Critique/Élevée/Moyenne/Faible/Info.
+
+\section{Synthèse des constats}
+% Tableau : id | gravité | titre | statut. Compteurs par gravité.
+
+\section{Détail des constats}
+% Une \constat{...} par constat, du plus grave au moins grave.
+
+\section{Contrôles vérifiés sans anomalie}
+
+\section{Matrice de couverture}
+% Tableau : composant ou catégorie OWASP | statut (testé, non applicable, non testé) | raison de la lacune.
+
+\section{Plan de remédiation priorisé}
+
+\section{Conclusion}
+\end{document}
