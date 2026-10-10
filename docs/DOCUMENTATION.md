@@ -1,6 +1,6 @@
 # AI Security Team — documentation de construction
 
-Projet portfolio cybersécurité : une **équipe d'agents IA** qui réalise un audit de sécurité applicative, sur le modèle d'une vraie équipe (scan statique, test dynamique, orchestration et rapport). Document destiné au GitHub : il raconte **comment c'est construit**, pas seulement ce que ça fait.
+Projet portfolio cybersécurité : une **équipe d'agents IA** qui réalise un audit de sécurité applicative, sur le modèle d'une vraie équipe (scan statique, test dynamique, orchestration et rapport). Ce document raconte **comment c'est construit**, pas seulement ce que ça fait.
 
 Deux objets sont documentés ici :
 1. **L'application auditée** (`App_muscu`) — le sujet de l'audit, construite proprement avec la sécurité intégrée.
@@ -19,8 +19,6 @@ Coach sportif iPhone (salle et street workout) : iOS natif SwiftUI (iOS 26, Swif
 La construction suit la discipline **spec-kit** : rien n'est codé avant que la spécification et les tâches existent. Une *constitution* (principes non négociables) prime sur tout le reste, et un principe de minimalisme (ne pas écrire de code inutile) encadre chaque ajout.
 
 ![Construction de l'app — pipeline spec-kit](img/diagrams/app-construction.png)
-
-<!-- chemin relatif valable si la racine du dépôt est cyber/ ; à adapter si on publie un sous-dossier -->
 
 Pipeline : Constitution → Specify → Clarify → Plan → Tasks → Analyze → Graphify → Implement → Converge, avec la sécurité pensée à chaque étape.
 
@@ -66,7 +64,7 @@ Points qui rendent l'équipe « réaliste » et pas jouet : **garde-fou anti-pro
 
 ### 2.3 Galerie — l'équipe en action
 
-Captures de l'audit de `app_naive` par l'équipe (dossier `capture_audit_agent_comparaison/`).
+Captures des audits : baseline en un prompt et équipe d'agents.
 
 **1. Méthode honnête : baseline en safe-mode.** La baseline (audit « 1 prompt » de comparaison) tourne avec toutes les personnalisations désactivées — preuve qu'elle n'a ni l'équipe, ni les skills, ni la méthode.
 
@@ -82,7 +80,9 @@ Captures de l'audit de `app_naive` par l'équipe (dossier `capture_audit_agent_c
 
 **4. Le livrable : rapport PDF.** Rapport d'audit généré automatiquement (page de titre, synthèse, fiches par constat, matrice de couverture, plan de remédiation) : voir les PDF dans [`reports/`](../reports/).
 
-<!-- Captures d'appoint disponibles dans le même dossier : 05-baseline-safe-mode-appmuscu.png (preuve safe-mode du test de suivi sur App_muscu), 06-app_naive-ui.png (l'app auditée — contient un email de test, à flouter avant publication). -->
+**5. Le test de suivi sur `App_muscu`.** Même méthode de baseline en safe-mode, cette fois sur l'app complexe, pour vérifier si l'écart équipe vs un prompt se creuse avec la complexité.
+
+![Baseline en safe-mode sur App_muscu](img/captures/05-baseline-safe-mode-appmuscu.png)
 
 ---
 
@@ -107,11 +107,11 @@ Conditions d'équité :
 
 ### Axe secondaire (bonus) — méthode d'audit (équipe structurée vs un prompt)
 
-Sur l'app bâclée, lancer aussi un audit « brut » : une **session neuve, hors de `cyber/`, un seul prompt** (« fais-moi un audit de sécurité de ce projet »), sans accès à l'équipe d'agents, au référentiel ni au script CVSS. Comparer au rapport de l'équipe : constats, faux positifs, scores, couverture. But : montrer l'apport de l'orchestration + des vrais outils + de la vérification, vs un Claude vierge.
+Sur l'app bâclée, lancer aussi un audit « brut » : une **session neuve, hors du projet, un seul prompt** (« fais-moi un audit de sécurité de ce projet »), sans accès à l'équipe d'agents, au référentiel ni au script CVSS. Comparer au rapport de l'équipe : constats, faux positifs, scores, couverture. But : montrer l'apport de l'orchestration + des vrais outils + de la vérification, vs un Claude vierge.
 
 ### Suite
 
-Après ce contraste — décision du 2026-10-06 — **plutôt que de construire une App B guidée, créer d'autres agents** (dépendances dédié, secrets dédié, remédiation ; plus tard les familles SOC et réseau rebranchées sur le homelab).
+Après ce contraste : **d'autres agents** (dépendances, secrets, remédiation), puis d'autres domaines (réseau, SOC).
 
 ---
 
@@ -137,14 +137,9 @@ Une partie de la valeur du projet n'est pas dans le code audité mais dans **l'e
 
 ### `pick-tools` — le skill qui choisit l'outillage
 
-Skill maison au niveau du compte (`~/.claude/skills/pick-tools/`), lancé par `/pick-tools <objectif>`. Au début d'une tâche, on lui décrit le but (ex. « ajouter la partie nutrition d'App_muscu ») et il répond : **quels outils utiliser, lesquels activer (avec les commandes exactes), lesquels laisser éteints** — rien n'est activé sans accord. Il tient à jour un catalogue d'outils dans son propre `SKILL.md`, et les références hors-plugins vivent dans `Projet/RESOURCES.md` (API gratuites, plugins GitHub évalués, procédure d'activation/désactivation en scope `local`/`user`).
+Skill maison au niveau du compte (`~/.claude/skills/pick-tools/`), lancé par `/pick-tools <objectif>`. Au début d'une tâche, on lui décrit le but (ex. « ajouter la partie nutrition d'App_muscu ») et il répond : **quels outils utiliser, lesquels activer (avec les commandes exactes), lesquels laisser éteints** — rien n'est activé sans accord. Il tient à jour un catalogue d'outils dans son propre `SKILL.md`, avec un fichier de références à part (API gratuites, plugins GitHub évalués, procédure d'activation/désactivation en scope `local`/`user`).
 
 C'est la pièce qui applique le **moindre privilège au niveau de la session entière** : on n'allume que l'outillage utile à la tâche, puis on l'éteint. Elle complète le choix des outils *par agent* dans l'équipe (scanner en lecture seule, pentester limité aux requêtes, orchestrateur seul à tout hériter).
-
-### Captures suggérées pour cette section
-
-- `/flow` ouvert pendant un audit : l'arbre orchestrateur → scanner/pentester en direct.
-- `blast-radius` interceptant une commande destructrice (si l'occasion se présente).
 
 ---
 
