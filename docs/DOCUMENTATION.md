@@ -20,7 +20,6 @@ La construction suit la discipline **spec-kit** : rien n'est codé avant que la 
 
 ![Construction de l'app — pipeline spec-kit](img/diagrams/app-construction.png)
 
-<!-- source éditable : docs/img/diagrams/app-construction.excalidraw -->
 <!-- chemin relatif valable si la racine du dépôt est cyber/ ; à adapter si on publie un sous-dossier -->
 
 Pipeline : Constitution → Specify → Clarify → Plan → Tasks → Analyze → Graphify → Implement → Converge, avec la sécurité pensée à chaque étape.
@@ -30,8 +29,6 @@ Choix structurants : **skills** `speckit-*` (workflow discipliné), **graphify**
 ### 1.2 Architecture d'exécution et frontières de sécurité
 
 ![Architecture d'exécution et frontières de sécurité](img/diagrams/app-architecture.png)
-
-<!-- source éditable : docs/img/diagrams/app-architecture.excalidraw -->
 
 Trois zones : iPhone (SwiftUI/SwiftData, Live Activity, Trousseau), Supabase (Auth JWT, Postgres/RLS, Edge Functions), API Claude. Points sensibles mis en évidence : Trousseau, RLS, Edge Functions.
 
@@ -55,8 +52,6 @@ L'ordre de conception a été : d'abord **quels outils** (de vrais outils du mé
 
 ![Construction de la security team — du choix des outils au moindre privilège](img/diagrams/secteam-construction.png)
 
-<!-- source éditable : docs/img/diagrams/secteam-construction.excalidraw -->
-
 Ordre : choix des outils réels → rôles → droits par rôle (moindre privilège, matérialisé par la longueur de la barre de privilège) → vérification + rapport. Seul l'orchestrateur hérite de tous les outils.
 
 Principe clé matérialisé : le **moindre privilège**. Le scanner et le pentester ont des outils restreints (le scanner ne peut même pas modifier l'app) ; seul l'orchestrateur, qui doit déléguer et écrire, hérite de tout. Deux ajouts au-delà des 3 rôles de base : un agent **`referentiel`** qui remet à jour les standards OWASP (API Top 10, LLM Top 10, MASVS, ASVS) depuis les sources officielles, et un script **`cvss31.py`** pour que chaque score CVSS soit calculé, jamais estimé à la main.
@@ -64,8 +59,6 @@ Principe clé matérialisé : le **moindre privilège**. Le scanner et le pentes
 ### 2.2 Le pipeline d'audit à l'exécution
 
 ![Pipeline d'audit à l'exécution](img/diagrams/secteam-pipeline.png)
-
-<!-- source éditable : docs/img/diagrams/secteam-pipeline.excalidraw -->
 
 Flux : orchestrateur → referentiel → scanner → garde-fou anti-prod (losange de décision) → pentester (ou sauté) → vérification (recalcul CVSS, contrôle des sous-agents) → rapport PDF + matrice de couverture.
 
@@ -87,12 +80,9 @@ Captures de l'audit de `app_naive` par l'équipe (dossier `capture_audit_agent_c
 
 ![Pentest dynamique sur l'app en cours d'exécution](img/captures/03-pentest-dynamique-live.png)
 
-**4. Le livrable : rapport PDF.** Première page du rapport d'audit généré automatiquement (page de titre, synthèse, fiches par constat, matrice de couverture, plan de remédiation).
-
-![Rapport d'audit final](img/captures/04-rapport-final.png)
+**4. Le livrable : rapport PDF.** Rapport d'audit généré automatiquement (page de titre, synthèse, fiches par constat, matrice de couverture, plan de remédiation) : voir les PDF dans [`reports/`](../reports/).
 
 <!-- Captures d'appoint disponibles dans le même dossier : 05-baseline-safe-mode-appmuscu.png (preuve safe-mode du test de suivi sur App_muscu), 06-app_naive-ui.png (l'app auditée — contient un email de test, à flouter avant publication). -->
-
 
 ---
 
